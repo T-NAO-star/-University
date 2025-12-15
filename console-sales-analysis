@@ -1,0 +1,28 @@
+# 1) 総発売数が多い上位プラットフォームを抽出10
+top10_platforms = (
+    df["ゲームプラットフォーム"]
+        . value_counts ()
+        . head (10)
+        . index
+)
+
+# 2) 上位に絞って年×プラットフォームの発売本数を集計10
+pivot = (
+    df[df["ゲームプラットフォーム"]. isin ( top10_platforms )]
+        . pivot_table ( index ="公開年",
+            columns ="ゲームプラットフォーム",
+            values ="ゲームパッケージラベル",
+            aggfunc ="count",
+            fill_value =0)
+        . sort_index () # 年で昇順に
+)
+
+# 3) 折れ線グラフで描画
+ax = pivot . plot ( kind ="line", marker ="o", figsize =(9 , 5) )
+ax. set_title ("上位ゲームプラットフォーム別・年度別発売本数10")
+ax. set_xlabel ("年度")
+ax. set_ylabel ("発売本数")
+ax. grid ( True )
+ax. legend ( title ="プラットフォーム", bbox_to_anchor =(1.02 , 1) , loc ="upper left")
+plt . tight_layout ()
+plt . show ()
